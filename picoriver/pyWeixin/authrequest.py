@@ -1,11 +1,23 @@
+"""Weixin OAuth 2.0 Requests, initiate authorization.
+
+.. moduleauthor:: Tsai Phan <phanalpha@hotmail.com>
+"""
+
 from urlrequest import URLRequest
+from str_enum import StrEnum, value_of
 
 
-class ResponseType:
+class ResponseType(StrEnum):
+    """response_type options.
+    """
+
     CODE = 'code'
 
 
-class Scope:
+class Scope(StrEnum):
+    """scope options.
+    """
+
     ID = 'snsapi_base'
     LOGIN = 'snsapi_login'
     PROFILE = 'snsapi_userinfo'
@@ -25,8 +37,8 @@ class AuthRequest(URLRequest):
         return str(self.query(
             appid=self.app.id,
             redirect_uri=self.redirect_url,
-            response_type=self.response_type,
-            scope=self.scope,
+            response_type=value_of(self.response_type),
+            scope=value_of(self.scope),
             state=self.state
         ))
 
@@ -67,9 +79,9 @@ class IndirectAuthRequest(AuthRequest):
         )
 
 
-class LoginRequest(IndirectAuthRequest):
+class GrantRequest(IndirectAuthRequest):
     def __init__(self, app, redirect_url, state):
-        super(LoginRequest, self).__init__(
+        super(GrantRequest, self).__init__(
             app,
             redirect_url,
             ResponseType.CODE,

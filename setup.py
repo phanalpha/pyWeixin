@@ -4,5 +4,6 @@ setup(
     name="pyWeixin",
     version="0.1.0",
     packages=find_packages(),
-    namespace_packages=['picoriver']
+    namespace_packages=['picoriver'],
+    install_requires=['enum34']
 )
