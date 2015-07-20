@@ -1,0 +1,6 @@
+/pyWeixin.egg-info/
+/vendor/
+/.idea/
+
+*.pyc
+*~
