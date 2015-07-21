@@ -1,3 +1,8 @@
+"""Resource requests.
+
+.. moduleauthor:: Tsai Phan <phanalpha@hotmail.com>
+"""
+
 from urlrequest import URLRequest
 from contextlib import closing
 from exception import WxException
@@ -7,50 +12,59 @@ import urllib2
 import json
 
 
-class ValidationRequest(URLRequest):
-    def __init__(self, credential):
-        super(ValidationRequest).__init__(
-            'https://api.weixin.qq.com/sns/auth'
-            '?access_token=ACCESS_TOKEN'
-            '&openid=OPENID'
-        )
+class ResourceRequest(URLRequest):
+    """Resource request, access via credential.
+    """
+
+    def __init__(self, url, credential):
+        """Resource request.
+
+        Args:
+            url (str): url sample.
+            credential (Credential): access token or so.
+        """
+        super(ResourceRequest, self).__init__(url)
 
         self.credential = credential
 
-    def commit(self):
-        with closing(urllib2.urlopen(
-                str(self.query(
-                    access_token=self.credential.access_token,
-                    openid=self.credential.openid
-                ))
-        )) as f:
-            res = json.loads(f.read())
-
-        if res.get('errcode'):
-            raise WxException(res['errmsg'], res['errcode'])
+    def build(self):
+        return dict(
+            access_token=self.credential.access_token,
+            openid=self.credential.openid
+        )
 
 
-class ProfileRequest(URLRequest):
+class AuthenticationRequest(ResourceRequest):
+    """Credential (token) authentication request.
+    """
+
+    def __init__(self, credential):
+        super(AuthenticationRequest, self).__init__(
+            'https://api.weixin.qq.com/sns/auth'
+            '?access_token=ACCESS_TOKEN'
+            '&openid=OPENID',
+            credential
+        )
+
+
+class ProfileRequest(ResourceRequest):
+    """Profile request.
+    """
+
     def __init__(self, credential):
         super(ProfileRequest, self).__init__(
             'https://api.weixin.qq.com/sns/userinfo'
             '?access_token=ACCESS_TOKEN'
-            '&openid=OPENID'
+            '&openid=OPENID',
+            credential
         )
 
-        self.credential = credential
-
     def commit(self):
-        with closing(urllib2.urlopen(
-                str(self.query(
-                    access_token=self.credential.access_token,
-                    openid=self.credential.openid
-                ))
-        )) as f:
-            res = json.loads(f.read())
-
-        if res.get('errcode'):
-            raise WxException(res['errmsg'], res['errcode'])
+        """
+        Returns:
+            Profile.
+        """
+        res = super(ProfileRequest, self).commit()
 
         return Profile(
             openid=res['openid'],

@@ -5,12 +5,7 @@
 
 from urlrequest import URLRequest
 from str_enum import StrEnum, value_of
-from contextlib import closing
 from credential import Credential
-from exception import WxException
-
-import urllib2
-import json
 
 
 class GrantType(StrEnum):
@@ -19,7 +14,17 @@ class GrantType(StrEnum):
 
 
 class TokRequest(URLRequest):
+    """Token request.
+    """
+
     def __init__(self, url, app, grant_type):
+        """Token request.
+
+        Args:
+            url (str): url sample.
+            app (WxApp): Weixin app.
+            grant_type (str): OAuth 2.0 grant type.
+        """
         super(TokRequest, self).__init__(url)
 
         self.app = app
@@ -32,11 +37,11 @@ class TokRequest(URLRequest):
         )
 
     def commit(self):
-        with closing(urllib2.urlopen(str(self.query(**self.build())))) as f:
-            res = json.loads(f.read())
-
-        if res.get('errcode'):
-            raise WxException(res['errmsg'], res['errcode'])
+        """
+        Returns:
+            Credential.
+        """
+        res = super(TokRequest, self).commit()
 
         return Credential(
             access_token=res['access_token'],
@@ -49,7 +54,14 @@ class TokRequest(URLRequest):
 
 
 class AccessRequest(TokRequest):
+    """Access request, trade authorization code for access token.
+    """
+
     def __init__(self, app, code):
+        """Access request.
+
+        .. seealso:: TokRequest
+        """
         super(AccessRequest, self).__init__(
             'https://api.weixin.qq.com/sns/oauth2/access_token'
             '?appid=APPID'
@@ -71,7 +83,14 @@ class AccessRequest(TokRequest):
 
 
 class RefreshRequest(TokRequest):
+    """Refresh request, refresh access token with refresh token.
+    """
+
     def __init__(self, app, credential):
+        """Refresh request.
+
+        .. seealso:: TokRequest
+        """
         super(RefreshRequest, self).__init__(
             'https://api.weixin.qq.com/sns/oauth2/refresh_token'
             '?appid=APPID'

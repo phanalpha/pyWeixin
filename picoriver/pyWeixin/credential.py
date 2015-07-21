@@ -1,8 +1,13 @@
+"""Access token and refresh token, openid or so.
+
+.. moduleauthor:: Tsai Phan <phanalpha@hotmail.com>
+"""
+
 from datetime import datetime, timedelta
 from collections import namedtuple
 from exception import WxException
 
-from resrequest import ValidationRequest, ProfileRequest
+from resrequest import AuthenticationRequest, ProfileRequest
 
 
 class Credential(namedtuple('POCredential', [
@@ -13,6 +18,9 @@ class Credential(namedtuple('POCredential', [
         'scope',
         'unionid'
 ])):
+    """Credential, access token and refresh token, openid or so.
+    """
+
     def __new__(cls, access_token, expire_in,
                 refresh_token, openid, scope, unionid):
         return super(Credential, cls).__new__(
@@ -26,9 +34,19 @@ class Credential(namedtuple('POCredential', [
         )
 
     def authenticate(self):
-        ValidationRequest(self).commit()
+        """Authenticate credential.
+
+        Raises:
+            WxException: authentication error, message and code.
+        """
+        AuthenticationRequest(self).commit()
 
     def is_valid(self):
+        """Validate credential.
+
+        Returns:
+            True on valid, or False.
+        """
         try:
             self.authenticate()
 
@@ -38,4 +56,12 @@ class Credential(namedtuple('POCredential', [
             return False
 
     def profile(self):
+        """User profile.
+
+        Returns:
+            Profile.
+
+        Raises:
+            WxException: access error, message and code.
+        """
         return ProfileRequest(self).commit()

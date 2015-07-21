@@ -1,2 +1,4 @@
-"""pyWeixin, a client lib to interact with Weixin open / mp apis.
+"""pyWeixin, a client of Weixin open / mp API.
 """
+
+from app import WxApp

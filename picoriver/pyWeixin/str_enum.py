@@ -1,3 +1,8 @@
+"""StrEnum, and util.
+
+.. moduleauthor:: Tsai Phan <phanalpha@hotmail.com>
+"""
+
 from enum import Enum
 
 
