@@ -2,3 +2,4 @@
 """
 
 from app import WxApp
+from credential import Credential

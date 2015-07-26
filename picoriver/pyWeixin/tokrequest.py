@@ -9,8 +9,8 @@ from credential import Credential
 
 
 class GrantType(StrEnum):
-    AuthorizationCode = 'authorization_code'
-    RefreshToken = 'refresh_token'
+    AUTHORIZATION_CODE = 'authorization_code'
+    REFRESH_TOKEN = 'refresh_token'
 
 
 class TokRequest(URLRequest):
@@ -69,7 +69,7 @@ class AccessRequest(TokRequest):
             '&code=CODE'
             '&grant_type=authorization_code',
             app,
-            GrantType.AuthorizationCode
+            GrantType.AUTHORIZATION_CODE
         )
 
         self.code = code
@@ -97,7 +97,7 @@ class RefreshRequest(TokRequest):
             '&grant_type=refresh_token'
             '&refresh_token=REFRESH_TOKEN',
             app,
-            GrantType.RefreshToken
+            GrantType.REFRESH_TOKEN
         )
 
         self.credential = credential

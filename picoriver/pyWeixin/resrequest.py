@@ -4,12 +4,7 @@
 """
 
 from urlrequest import URLRequest
-from contextlib import closing
-from exception import WxException
 from profile import Profile
-
-import urllib2
-import json
 
 
 class ResourceRequest(URLRequest):
